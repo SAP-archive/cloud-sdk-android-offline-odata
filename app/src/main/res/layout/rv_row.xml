@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content">
+
+    <com.sap.cloud.mobile.fiori.object.ObjectCell
+        android:id="@+id/objectCell"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        app:descriptionWidthPercent=".001"
+        app:statusWidth="80dp"
+        app:lines="2"/>
+
+</android.support.constraint.ConstraintLayout>

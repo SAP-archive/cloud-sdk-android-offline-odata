@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.android.offline">
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="Offline"
+        android:networkSecurityConfig="@xml/kapsel_network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ChangeCustomerDetailActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".CreateCustomerActivity" />
+        <activity android:name=".ChangeCustomerWarningActivity"></activity>
+        <service
+            android:name="com.example.android.offline.OfflineODataForegroundService">
+        </service>
+    </application>
+
+</manifest>

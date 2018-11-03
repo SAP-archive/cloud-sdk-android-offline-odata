@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Offline</string>
+
+    <string name="update_button">Update Customer</string>
+    <string name="delete_button">Delete Customer</string>
+    <string name="orange_dot">Orange Dot</string>
+    <string name="red_dot">Red Dot</string>
+    <string name="yellow_dot">Yellow Dot</string>
+    <string name="white_dot">White Dot</string>
+</resources>

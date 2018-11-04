@@ -27,6 +27,9 @@ Other good sources of information on using the SDK are
 and
 [Get Started with SAP Cloud Platform SDK for Android](https://developers.sap.com/canada/group.sdk-android.html).
 
+Finally if you have questions/comments/suggestions regarding this app please
+post them using the tag [SAP Cloud Platform SDK for Android](https://www.sap.com/community/tag.html?id=73555000100800001281&tag=type:question).
+
 ## The Finished Product
 
 The app enables customer info to be viewed and edited.

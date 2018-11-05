@@ -1,9 +1,11 @@
 # SAP Cloud Platform SDK for Android Offline OData Sample
 
 ## Table of Contents
-- [Purpose of the App](#purpose-of-the-app)
+- [Description](#description)
 - [The Finished Product](#the-finished-product)
+- [Requirements](#requirements)
 - [Setting Up Mobile Services](#setting-up-mobile-services)
+- [Configuration](#configuration)
 - [Creating the Offline Store](#creating-the-offline-store)
 - [Adding Defining Queries After Opening Store](#adding-defining-queries-after-opening-store)
 - [Creating Entities](#creating-entities)
@@ -15,20 +17,15 @@
 - [Indexing Entities](#indexing-entities)
 - [Error Handling](#error-handling)
 - [Paging](#paging)
+- [Known Issues](#known-issues)
+- [How to obtain support](#how-to-obtain-support)
+- [License](#license)
 
-## Purpose of the App
+## Description
 
 The purpose of this app is to showcase the functionality of the Offline OData component of the SAP Cloud Platform SDK for Android.  The app downloads a portion of the backend's data, and the user then makes changes to the data locally. The user doesn't need a working internet connection to make changes once an initial download has been completed. Once an internet connection is re-established, the user can synchronize their local changes with the backend data with just the tap of a button.
 
 This sample app will show how to indicate to the user which data has changed locally and has yet to be synchronized with the backend. Additionally, it will show how we can deal with differences between data in the user's local database and the OData Sample Service.
-
-Other good sources of information on using the SDK are 
-[Step by Step with the SAP Cloud Platform SDK for Android](https://blogs.sap.com/2018/10/15/step-by-step-with-the-sap-cloud-platform-sdk-for-android-part-1/)
-and
-[Get Started with SAP Cloud Platform SDK for Android](https://developers.sap.com/canada/group.sdk-android.html).
-
-Finally if you have questions/comments/suggestions regarding this app please
-post them using the tag [SAP Cloud Platform SDK for Android](https://www.sap.com/community/tag.html?id=73555000100800001281&tag=type:question).
 
 ## The Finished Product
 
@@ -37,6 +34,12 @@ The app enables customer info to be viewed and edited.
 ![App home screen](images/customer_screen.png)
 
 Let's start setting up this project!
+
+## Requirements
+This project requires Android Studio and the SAP Cloud Platform SDK for Android.
+
+The following blog contains detailed information on how to setup and install the SDK. 
+[Step by Step with the SAP Cloud Platform SDK for Android](https://blogs.sap.com/2018/10/15/step-by-step-with-the-sap-cloud-platform-sdk-for-android-part-1/)
 
 ## Setting Up Mobile Services
 The initial mobile services configuration for the offline project is included in the project folder. In the mobile services cockpit, navigate to **Mobile Applications > Native/Hybrid** and click the **Import** button.
@@ -56,6 +59,11 @@ Click **Save**, and the rest of the details for the OAuth configuration such as 
 
 ![Save the OAuth configuration](images/save_oauth_config.png)
 
+
+## Configuration
+
+Open the project in Android Studio.
+
 To successfully run the application, the OAuth string constants in the application need to be changed to reflect the new values. In the project, type `Ctrl + N` on Windows, or `Command + O` on Mac, and navigate to `MainActivity.java` and change the constants at the top of the file to match your username and client ID.
 
 ![Update the constants at the top of the MainActivity file](images/update_oauth_constants.png)
@@ -63,6 +71,8 @@ To successfully run the application, the OAuth string constants in the applicati
 The `OAUTH_CLIENT_ID` string can be found in the mobile services cockpit, as shown below.
 
 ![The OAUTH_CLIENT_ID string located in the mobile services cockpit](images/oauth_client_id.png)
+
+Run the project to deploy it onto an emulator or device.
 
 ## Creating the Offline Store
 There are a few things to take into account when creating an offline store. First of all, you must identify what data needs to be available offline. It is best to only download what is needed because large downloads will slow down the offline store's initial open time. Additionally, permitting the user to only download a subset of the data relevant to them can reduce the possibility of two users modifying the same data when offline.
@@ -274,7 +284,7 @@ public void uploadStore(OfflineODataProvider offlineODataProvider, @Nullable fin
 }
 ```
 
-The `OfflineODataForegroundService` class also contains another class, namely `Task`, which gets used in the above three methods. The `startTask` method performs the operation (open/download/upload), and creates a notification so the user can see the task's progress while the app is in the background. In the below screenshot, the app has been minimized but by taking a look at the notification drawer, it is clear that the offline store operations are still running.
+The `OfflineODataForegroundService` class also contains another class, namely `Task`, which gets used in the above three methods. The `startTask` method performs the operation (open/download/upload) and creates a notification so the user can see the task's progress while the app is in the background. In the below screenshot, the app has been minimized but by taking a look at the notification drawer, it is clear that the offline store operations are still running.
 
 ![Offline service produces a notification](images/offline_notification.png)
 
@@ -366,7 +376,7 @@ DataQuery updatedCustomersQuery = new DataQuery()
 List<Customer> changedCustomers = storageManager.getESPMContainer().getCustomers(updatedCustomersQuery);
 ```
 
-The `DataQuery` is filtered based on `upsertedLastDownload()`, and then orders the resulting set of `Customers` based on last name. The `upsertedLastDownload()` function retrieves customers that were inserted or updated in the local store during the last download.
+The `DataQuery` is filtered based on `upsertedLastDownload()` and then orders the resulting set of `Customers` based on last name. The `upsertedLastDownload()` function retrieves customers that were inserted or updated in the local store during the last download.
 
 You probably want to bring the user's attention to the data that is newly downloaded, perhaps by showing indicators on the key entries.
 
@@ -377,7 +387,7 @@ The sample application highlights 4 states which are described in the below tabl
 | Icon          | Name          | Meaning       |
 | ------------- | ------------- | :------------ |
 | ![Yellow exclamation mark for new entries](images/ic_yellow_bang_two.png)  |  New Entry | An entry is considered to be **new** when it has either been updated and synchronized with the backend since the user started working on the app, or is a newly downloaded entry. If another user makes a change to the backend and then sync's it, upon downloading the database again, the entry will be highlighted with a yellow exclamation mark. |
-| ![Orange refresh image for local entries](images/ic_local_state.png)  | Local Entry | When entities are updated locally but not yet synchronized with the backend, it would be useful to highlight those changed entities, so the user knows they have to perform a sync. This state is known as the **local** state, and entities are considered to be in the **local** state when the `EntityValue.isLocal()` method returns `true`. Entites in the local state are indicated with an orange "refresh" image. |
+| ![Orange refresh image for local entries](images/ic_local_state.png)  | Local Entry | When entities are updated locally but not yet synchronized with the backend, it would be useful to highlight those changed entities, so the user knows they have to perform a sync. This state is known as the **local** state, and entities are considered to be in the **local** state when the `EntityValue.isLocal()` method returns `true`. Entities in the local state are indicated with an orange "refresh" image. |
 | ![Red exclamation mark for error entities](images/ic_error_state.png)  | Error State | Entities are in the **error** state if something goes wrong. Similarly to local entities, the `EntityValue.getInErrorState()` method returns whether or not the entity is in the **error** state. Entities in the error state are indicated with a red exclamation mark.  |
 | ![Sample default profile picture](images/ic_empty_dot.png) | Default | Entities without a special state should be shown using some default image, such as an empty status dot. |
 
@@ -673,3 +683,15 @@ public void loadInitial(@NonNull LoadInitialParams<DataQuery> params,
 This method is called to load the **first** page of data into the app, providing a link to the next page of data in the `callback.onResult` call at the end. The `nextLink` approach lends itself well to the [PageKeyedDataSource](https://developer.android.com/reference/android/arch/paging/PageKeyedDataSource) way of loading data into a `PagedList`.
 
 For more information regarding client and server side paging visit [Using the OData API](https://help.sap.com/doc/c2d571df73104f72b9f1b73e06c5609a/Latest/en-US/docs/user-guide/odata/Using_OData_API.html). For more information regarding the Android Paging library, check the official Google documentation at [Paging Library Overview](https://developer.android.com/topic/libraries/architecture/paging/).
+
+## How to obtain support
+
+If you have questions/comments/suggestions regarding this app please
+post them using the tag [SAP Cloud Platform SDK for Android](https://www.sap.com/community/tag.html?id=73555000100800001281&tag=type:question).
+
+## Known Issues
+
+## License
+
+Copyright (c) 2018 SAP SE or an SAP affiliate company. All rights reserved.
+This file is licensed under the Apache Software License, v. 2 except as noted otherwise in the [LICENSE](LICENSE) file .

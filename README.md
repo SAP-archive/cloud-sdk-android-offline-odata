@@ -52,7 +52,7 @@ Your username and `OAUTH_CLIENT_ID` string can be found in the mobile services c
 
 ![The OAUTH_CLIENT_ID string located in the mobile services cockpit](images/oauth_client_id.png)
 
-Run the project to deploy it onto an emulator or device.  For further details on the app see [DOCUMENTATION.md](documentation.md).
+Run the project to deploy it onto an emulator or device.  For further details on the app see [DOCUMENTATION.md](DOCUMENTATION.md).
 
 ## Known Issues
 

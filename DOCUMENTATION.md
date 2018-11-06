@@ -13,7 +13,7 @@
 - [Error Handling](#error-handling)
 - [Paging](#paging)
 
-See also [README.md](readme.md)
+See also [README.md](README.md)
 
 ## Creating the Offline Store
 There are a few things to take into account when creating an offline store. First of all, you must identify what data needs to be available offline. It is best to only download what is needed because large downloads will slow down the offline store's initial open time. Additionally, permitting the user to only download a subset of the data relevant to them can reduce the possibility of two users modifying the same data when offline.

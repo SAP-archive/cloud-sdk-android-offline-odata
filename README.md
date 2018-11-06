@@ -16,10 +16,10 @@ Let's start setting up this project!
 
 ## Requirements
 * [Android Studio](https://developer.android.com/studio/index.html) version 3.2.1
-* [SAP Cloud Platform SDK for Android](https://www.sap.com/developer/trials-downloads/additional-downloads/sap-cloud-platform-sdk-for-android-15508.html) version 1.1.2
+* [SAP Cloud Platform SDK for Android](https://www.sap.com/developer/trials-downloads/additional-downloads/sap-cloud-platform-sdk-for-android-15508.html) or [Software Downloads](https://launchpad.support.sap.com/#/softwarecenter/template/products/_APP=00200682500000001943&_EVENT=NEXT&HEADER=Y&FUNCTIONBAR=Y&EVENT=TREE&NE=NAVIGATE&ENR=73555000100800001281&V=MAINT&TA=ACTUAL/SAP%20CP%20SDK%20FOR%20AND) version 1.1.2 (1.0 SP0 PL02)
 * [SAP Cloud Platform](https://cloudplatform.sap.com/index.html)
 
-The blog [Step by Step with the SAP Cloud Platform SDK for Android](https://blogs.sap.com/2018/10/15/step-by-step-with-the-sap-cloud-platform-sdk-for-android-part-1/) contains additional details on how to setup and install the SDK, how to register for a trial version of the SAP Cloud Platform, and how to enable Mobile Services.
+The blog [Step by Step with the SAP Cloud Platform SDK for Android](https://blogs.sap.com/2018/10/15/step-by-step-with-the-sap-cloud-platform-sdk-for-android-part-1/) contains additional details on how to setup and install the SDK, how to register for a trial version of the SAP Cloud Platform, and how to enable Mobile Services.  It is also a great place to start if you are new to the SAP Cloud Platform SDK for Android.
 
 ## Setting Up Mobile Services
 The initial mobile services configuration for the offline project is included in the project folder. In the mobile services cockpit, navigate to **Mobile Applications > Native/Hybrid** and click the **Import** button.
@@ -35,7 +35,7 @@ The imported project configuration will have an OAuth security endpoint that doe
 
 ![Adding oauth client](images/add_oath_client.png)
 
-Click **Save**, and the rest of the details for the OAuth configuration such as **Authorization Endpoint**, **Token Endpoint**, **End User UI** will be filled in.
+Click **Save**, and the rest of the details for the OAuth configuration such as **Authorization Endpoint**, **Token Endpoint**, **End User UI**, and **Redirect URL** will be filled in.
 
 ![Save the OAuth configuration](images/save_oauth_config.png)
 

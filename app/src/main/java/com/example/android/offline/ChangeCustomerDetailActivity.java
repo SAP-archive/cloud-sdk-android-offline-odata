@@ -30,10 +30,9 @@ public class ChangeCustomerDetailActivity extends AppCompatActivity {
     EditText addressField;
     EditText houseNumField;
     EditText postalCodeField;
-
     StorageManager storageManager;
-    static Customer customer;
 
+    static Customer customer;
     private boolean fieldChanged = false;
 
     @Override
@@ -43,7 +42,7 @@ public class ChangeCustomerDetailActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle("Change Customer");
+        setTitle("Edit Customer");
         setProfileHeader();
         dobField = findViewById(R.id.dob_edittext);
         cityField = findViewById(R.id.city_edittext);
@@ -90,20 +89,37 @@ public class ChangeCustomerDetailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.action_update) {
+        if (id == R.id.action_update) {
             onSave();
-        } else if(id == R.id.action_delete) {
+        }
+        else if (id == R.id.action_delete) {
             onDelete();
+        }
+        else if (id == android.R.id.home) {
+            finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     private void setProfileHeader() {
         ProfileHeader customerHeader = findViewById(R.id.profile_header);
         customerHeader.setHeadline(customer.getFirstName() + " " + customer.getLastName());
         customerHeader.setDetailImage(R.drawable.ic_account_circle_white_24dp);
         customerHeader.setSubheadline(customer.getEmailAddress());
+    }
+
+    public void createMessageDialog(String message) {
+        AlertDialog alertDialog = new AlertDialog.Builder(ChangeCustomerDetailActivity.this).create();
+        alertDialog.setTitle(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertDialog.show();
+        alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.colorPrimary, null));
     }
 
     public void onSave() {
@@ -113,8 +129,7 @@ public class ChangeCustomerDetailActivity extends AppCompatActivity {
                 if (dob.lessEqual(LocalDateTime.now())) {
                     customer.setDateOfBirth(dob);
                 } else {
-                    mToast = Toast.makeText(this, "ERROR: Date of birth cannot be in the future.", Toast.LENGTH_LONG);
-                    mToast.show();
+                    createMessageDialog("Date of birth cannot be in the future.");
                     return;
                 }
             }
@@ -122,8 +137,7 @@ public class ChangeCustomerDetailActivity extends AppCompatActivity {
             if (phoneField.getText().toString().matches("[0-9()\\- ]+")) {
                 customer.setPhoneNumber(String.valueOf(phoneField.getText().toString()));
             } else {
-                mToast = Toast.makeText(this, "ERROR: Phone number can only contain digits, parentheses and dashes.", Toast.LENGTH_LONG);
-                mToast.show();
+                createMessageDialog("Please input a valid phone number (digits, parentheses, dashes).");
                 return;
             }
             customer.setStreet(addressField.getText().toString());
@@ -146,7 +160,6 @@ public class ChangeCustomerDetailActivity extends AppCompatActivity {
             mToast.show();
             mToast = null;
         }
-
     }
 
     public void onDelete() {
@@ -154,22 +167,20 @@ public class ChangeCustomerDetailActivity extends AppCompatActivity {
         alertDialog.setTitle("Are you sure you want to delete the customer?");
         alertDialog.setMessage("This action cannot be undone.");
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "DELETE",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(customer.hasDataValue(Customer.customerID)) {
-                            String cId = customer.getCustomerID();
-                            DataQuery getAllSalesOrders = new DataQuery().orderBy(SalesOrderHeader.salesOrderID, SortOrder.ASCENDING).filter(SalesOrderHeader.customerID.equal(cId));
-                            storageManager.getESPMContainer().getSalesOrderHeadersAsync(getAllSalesOrders, (salesOrders) -> {
-                                for (SalesOrderHeader salesOrder : salesOrders) {
-                                    storageManager.getESPMContainer().deleteEntity(salesOrder);
-                                }
-                                deleteCustomer();
-                            }, (error) -> {
-                                Log.d("myDebuggingTag", "Error getting customers: " + error.getMessage());
-                            });
-                        } else {
+                (dialog, which) -> {
+                    if(customer.hasDataValue(Customer.customerID)) {
+                        String cId = customer.getCustomerID();
+                        DataQuery getAllSalesOrders = new DataQuery().orderBy(SalesOrderHeader.salesOrderID, SortOrder.ASCENDING).filter(SalesOrderHeader.customerID.equal(cId));
+                        storageManager.getESPMContainer().getSalesOrderHeadersAsync(getAllSalesOrders, (salesOrders) -> {
+                            for (SalesOrderHeader salesOrder : salesOrders) {
+                                storageManager.getESPMContainer().deleteEntity(salesOrder);
+                            }
                             deleteCustomer();
-                        }
+                        }, (error) -> {
+                            Log.d("myDebuggingTag", "Error getting customers: " + error.getMessage());
+                        });
+                    } else {
+                        deleteCustomer();
                     }
                 });
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "CANCEL", new DialogInterface.OnClickListener() {

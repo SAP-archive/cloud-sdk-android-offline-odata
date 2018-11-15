@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="41dp"
-        android:padding="15dp"
+        android:padding="16dp"
         android:text="This customer was deleted by another user since your last sync, do you want to re-create the customer?"
         android:textSize="18sp" />
 

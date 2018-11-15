@@ -13,9 +13,7 @@ public class CustomerDataSourceFactory extends DataSource.Factory<DataQuery, Cus
     @Override
     public DataSource<DataQuery, CustomerListItem> create() {
         CustomerPageKeyedDataSource dataSource = new CustomerPageKeyedDataSource(storageManager.getESPMContainer());
-
         postLiveData.postValue(dataSource);
-
         return dataSource;
     }
 }

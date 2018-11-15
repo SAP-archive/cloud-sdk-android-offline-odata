@@ -11,6 +11,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="@dimen/key_line_16dp"
             android:orientation="vertical"
             android:background="@color/white">
 
@@ -19,13 +20,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:text="First name："
-                android:textSize="18sp" />
+                style="@style/FioriTextStyle.OVERLINE"
+                android:text="First name："/>
 
             <EditText
                 android:id="@+id/firstname_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/key_line_16dp"
                 android:selectAllOnFocus="true" />
 
             <TextView
@@ -33,12 +35,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:text="Last name："
-                android:textSize="18sp" />
+                style="@style/FioriTextStyle.OVERLINE"
+                android:text="Last name："  />
 
             <EditText
                 android:id="@+id/lastname_edittext"
                 android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/key_line_16dp"
                 android:layout_height="wrap_content"
                 android:selectAllOnFocus="true" />
 
@@ -47,12 +50,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:text="Email："
-                android:textSize="18sp" />
+                style="@style/FioriTextStyle.OVERLINE"
+                android:text="Email："/>
 
             <EditText
                 android:id="@+id/email_edittext"
                 android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/key_line_16dp"
                 android:layout_height="wrap_content"
                 android:selectAllOnFocus="true" />
 
@@ -61,12 +65,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:text="Address："
-                android:textSize="18sp" />
+                style="@style/FioriTextStyle.OVERLINE"
+                android:text="Address："/>
 
             <EditText
                 android:id="@+id/address_edittext"
                 android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/key_line_16dp"
                 android:layout_height="wrap_content"
                 android:selectAllOnFocus="true" />
 
@@ -74,12 +79,13 @@
                 android:id="@+id/tv_postal_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="41dp"
-                android:text="Postal Code："
-                android:textSize="18sp" />
+                android:padding="5dp"
+                style="@style/FioriTextStyle.OVERLINE"
+                android:text="Postal Code："/>
 
             <EditText
                 android:id="@+id/postal_code_edittext"
+                android:layout_marginBottom="@dimen/key_line_16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -87,12 +93,13 @@
                 android:id="@+id/tv_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="41dp"
-                android:text="Phone："
-                android:textSize="18sp" />
+                android:padding="5dp"
+                style="@style/FioriTextStyle.OVERLINE"
+                android:text="Phone："/>
 
             <EditText
                 android:id="@+id/phone_edittext"
+                android:layout_marginBottom="@dimen/key_line_16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -101,25 +108,27 @@
                 android:id="@+id/tv_city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="41dp"
-                android:text="City："
-                android:textSize="18sp" />
+                style="@style/FioriTextStyle.OVERLINE"
+                android:padding="5dp"
+                android:text="City："/>
 
             <EditText
                 android:id="@+id/city_edittext"
                 android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/key_line_16dp"
                 android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/tv_country"
                 android:layout_width="wrap_content"
+                style="@style/FioriTextStyle.OVERLINE"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="41dp"
-                android:text="Country Code："
-                android:textSize="18sp" />
+                android:padding="5dp"
+                android:text="Country Code："/>
 
             <EditText
                 android:id="@+id/country_edittext"
+                android:layout_marginBottom="@dimen/key_line_16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -127,12 +136,13 @@
                 android:id="@+id/tv_dob"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="41dp"
-                android:text="Date of Birth："
-                android:textSize="18sp" />
+                style="@style/FioriTextStyle.OVERLINE"
+                android:padding="5dp"
+                android:text="Date of Birth："/>
 
             <EditText
                 android:id="@+id/dob_edittext"
+                android:layout_marginBottom="@dimen/key_line_16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -141,25 +151,18 @@
                 android:id="@+id/tv_house_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="41dp"
-                android:text="House Number："
-                android:textSize="18sp" />
+                style="@style/FioriTextStyle.OVERLINE"
+                android:padding="5dp"
+                android:text="House Number："/>
 
             <EditText
                 android:id="@+id/house_num_edittext"
+                android:layout_marginBottom="@dimen/key_line_16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-
-            <Button
-                android:id="@+id/create_button"
-                android:fontFamily="@font/fiori72"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:onClick="onCreateCustomer"
-                android:text="Create Customer" />
         </LinearLayout>
+
     </ScrollView>
+
 </RelativeLayout>

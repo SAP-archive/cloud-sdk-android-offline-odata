@@ -13,6 +13,7 @@ import com.sap.cloud.android.odata.espmcontainer.Customer;
 public class CustomerRecyclerViewAdapter extends BaseAdapter<CustomerListItem> {
 
     private RecyclerCallback callback;
+
     private static final DiffUtil.ItemCallback<CustomerListItem> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<CustomerListItem>() {
                 @Override

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,31 +8,41 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <include layout="@layout/appbar"/>
+    <include layout="@layout/appbar" />
 
     <TextView
-        android:fontFamily="@font/fiori72"
         android:id="@+id/login_text"
-        android:text="Log in with the menu in the top right to see your customers."
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/fiori72"
         android:gravity="center"
         android:padding="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:text="Log in with the menu in the top right to see your customers." />
 
     <LinearLayout
         android:id="@+id/loading_spinner_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ProgressBar
             android:id="@+id/loading_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="80dp"
+            android:indeterminate="true"
             android:minWidth="80dp"
-            android:indeterminate="true"/>
+            android:minHeight="80dp" />
+
+        <TextView
+            android:id="@+id/loading_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="Preparing authentication."
+            android:textAlignment="center"
+            android:padding="@dimen/key_line_56dp"/>
 
     </LinearLayout>
 

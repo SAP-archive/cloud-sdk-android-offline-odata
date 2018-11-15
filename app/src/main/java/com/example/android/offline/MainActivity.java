@@ -79,27 +79,36 @@ import static com.example.android.offline.ChangeCustomerDetailActivity.customer;
 import static com.example.android.offline.StorageManager.adapter;
 
 public class MainActivity extends AppCompatActivity implements CustomerRecyclerViewAdapter.ItemClickListener {
+    private final static String USER_NUMBER = "i501130";
+    private final static String OAUTH_CLIENT_ID = "96bc0a62-0fcc-4da0-842b-458460664b6f";
+
+    public final static String TAG = "myDebuggingTag";
+    public final static String APP_ID = "com.sap.offline";
+    public final static String SERVICE_URL = "https://hcpms-" + USER_NUMBER + "trial.hanatrial.ondemand.com";
+    public final static String CONNECTION_ID = "com.sap.edm.sampleservice.v2";
+
+    private final static String AUTH_END_POINT = "https://oauthasservices-" + USER_NUMBER + "trial.hanatrial.ondemand.com/oauth2/api/v1/authorize";
+    private final static String TOKEN_END_POINT = "https://oauthasservices-" + USER_NUMBER + "trial.hanatrial.ondemand.com/oauth2/api/v1/token";
+    private final static String OAUTH_REDIRECT_URL = "https://oauthasservices-" + USER_NUMBER + "trial.hanatrial.ondemand.com";
     private final static String ZERO_QUANTITY_ERROR_MESSAGE = "The value of quantity should be greater than zero";
 
-    private boolean firstOpen;
-    private final static String AUTH_END_POINT = "https://oauthasservices-i821234trial.hanatrial.ondemand.com/oauth2/api/v1/authorize";
-    private final static String TOKEN_END_POINT = "https://oauthasservices-i821234trial.hanatrial.ondemand.com/oauth2/api/v1/token";
-    private final static String OAUTH_CLIENT_ID = "cbd336b4-0abc-4232-ae97-8cf6d7000bb1";
-    private final static String OAUTH_REDIRECT_URL = "https://oauthasservices-i821234trial.hanatrial.ondemand.com";
+    private Menu menu;
     private String deviceID;
-    private MenuItem registerMenuItem;
-    private MenuItem unRegisterMenuItem;
+    private boolean firstOpen;
+    private MenuItem syncMenuItem;
+    private MenuItem loginMenuItem;
+    private MenuItem logoutMenuItem;
+    private MenuItem createCustomerMenuItem;
+    private MenuItem zeroItemMenuItem;
     private TextView loginTextView;
+    private TextView loadingTextView;
     private LinearLayout loadingSpinnerParent;
     private RecyclerView recyclerView;
     private SettingsParameters settingsParameters;
 
-    public final static String myTag = "myDebuggingTag";
-    public final static String appID = "com.sap.offline";
-    public final static String serviceURL = "https://hcpms-i821234trial.hanatrial.ondemand.com";
-    public final static String connectionID = "com.sap.edm.sampleservice.v2";
     public static String currentUser;
     public static CustomerDataSourceFactory factory;
+
     public StorageManager storageManager = StorageManager.getInstance();
 
     protected static Toast mToast = null;
@@ -118,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
             // interact with the service.  Because we have bound to a explicit
             // service that we know is running in our own process, we can
             // cast its IBinder to a concrete class and directly access it.
-            boundService = ((OfflineODataForegroundService.LocalBinder)service).getService();
+            boundService = ((OfflineODataForegroundService.LocalBinder) service).getService();
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -153,12 +162,12 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
                 .build();
         SAPOAuthTokenStore oauthTokenStore = SAPOAuthTokenStore.getInstance();
         try {
-            settingsParameters = new SettingsParameters(serviceURL, appID, deviceID, "1.0");
+            settingsParameters = new SettingsParameters(SERVICE_URL, APP_ID, deviceID, "1.0");
         } catch (MalformedURLException e) {
-            Log.d(myTag, "Error creating the settings parameters: " + e.getMessage());
+            Log.d(TAG, "Error creating the settings parameters: " + e.getMessage());
         }
         OkHttpClient myOkHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(new AppHeadersInterceptor(appID, deviceID, "1.0"))
+                .addInterceptor(new AppHeadersInterceptor(APP_ID, deviceID, "1.0"))
                 .addInterceptor(new OAuth2Interceptor(new OAuth2WebViewProcessor(oAuth2Configuration), oauthTokenStore))
                 .cookieJar(new WebkitCookieJar())
                 .build();
@@ -167,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
         ch.qos.logback.classic.Logger myRootLogger = Logging.getRootLogger();
         myRootLogger.setLevel(Level.ERROR);  //levels in order are all, trace, debug, info, warn, error, off
         loadingSpinnerParent = findViewById(R.id.loading_spinner_parent);
+        loadingTextView = findViewById(R.id.loading_text_view);
         loginTextView = findViewById(R.id.login_text);
         recyclerView = findViewById(R.id.rvCustomers);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -185,6 +195,40 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
         firstOpen = savedInstanceState == null;
     }
 
+    private void checkError(String error) {
+        if (error.contains("Unable to resolve host")) { // no wifi
+            Log.d(TAG, "Shared Offline Store failed to open. Check WiFi.");
+            runOnUiThread(() -> {
+                findViewById(R.id.loading_spinner).setVisibility(View.GONE);
+                ((TextView) findViewById(R.id.loading_text_view)).setText("Failed to open Shared Offline Store. Make sure that you have Internet connection and restart the app.");
+            });
+        } else if (error.contains("HTTP status code: 503")) { // bad i number
+            Log.d(TAG, "Shared Offline Store failed to open. Check i-number in MainActivity.java file.");
+            runOnUiThread(() -> {
+                findViewById(R.id.loading_spinner).setVisibility(View.GONE);
+                ((TextView) findViewById(R.id.loading_text_view)).setText("Failed to open Shared Offline Store. Make sure that you have the correct USER_NUMBER in MainActivity.java file.");
+            });
+        } else if (error.toString().contains("HTTP status code: 404")) {
+            Log.d(TAG, "Shared Offline Store failed to open. Check Cockpit for MultiUser project.");
+            runOnUiThread(() -> {
+                findViewById(R.id.loading_spinner).setVisibility(View.GONE);
+                ((TextView) findViewById(R.id.loading_text_view)).setText("Failed to open Shared Offline Store. Make sure that the user has Offline project in Cockpit.");
+            });
+        } else if (error.contains("unauthorized_client")) {
+            Log.d(TAG, "Shared Offline Store failed to open. Check OAUTH_CLIENT_ID in MainActivity.java file.");
+            runOnUiThread(() -> {
+                findViewById(R.id.loading_spinner).setVisibility(View.GONE);
+                ((TextView) findViewById(R.id.loading_text_view)).setText("Failed to open Shared Offline Store. Make sure that you have the correct OAUTH_CLIENT_ID in MainActivity.java file.");
+            });
+        } else {
+            Log.d(TAG, "Shared Offline Store failed to open. Error not caught: " + error.toString());
+            runOnUiThread(() -> {
+                findViewById(R.id.loading_spinner).setVisibility(View.GONE);
+                ((TextView) findViewById(R.id.loading_text_view)).setText("Failed to open Shared Offline Store. Error: " + error.toString());
+            });
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -200,9 +244,8 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
         if (bindService(new Intent(MainActivity.this, OfflineODataForegroundService.class),
                 connection, Context.BIND_AUTO_CREATE)) {
             shouldUnbind = true;
-        }
-        else {
-            Log.e(myTag, "Error: The requested service doesn't " +
+        } else {
+            Log.e(TAG, "Error: The requested service doesn't " +
                     "exist, or this client isn't allowed access to it.");
         }
     }
@@ -214,7 +257,6 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
             shouldUnbind = false;
         }
     }
-
 
     /**
      * toastAMessageFromBackground is used to produce a toast message
@@ -242,16 +284,16 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
             storageManager.getOfflineODataProvider().addDefiningQuery(suppliersQuery);
             storageManager.getOfflineODataProvider().download(() -> {
                 List<Supplier> suppliers = storageManager.getESPMContainer().getSuppliers();
-                Log.d(myTag, "Found these suppliers: ");
-                for(Supplier supplier : suppliers) {
-                    Log.d(myTag, supplier.getSupplierName());
+                Log.d(TAG, "Found these suppliers: ");
+                for (Supplier supplier : suppliers) {
+                    Log.d(TAG, supplier.getSupplierName());
                 }
             }, (error) -> {
-                Log.e(myTag, "Error occurred: " + error.getMessage());
+                Log.e(TAG, "Error occurred: " + error.getMessage());
             });
         } catch (OfflineODataException e) {
             e.printStackTrace();
-            Log.e(myTag, "Exception encountered: " + e.getMessage());
+            Log.e(TAG, "Exception encountered: " + e.getMessage());
         }
     }
 
@@ -265,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
         AndroidSystem.setContext(getApplicationContext());
 
         try {
-            URL url = new URL(serviceURL + "/" + connectionID);
+            URL url = new URL(SERVICE_URL + "/" + CONNECTION_ID);
             OfflineODataParameters offParam = new OfflineODataParameters();
             offParam.setEnableRepeatableRequests(true);
             // by setting the page size here, we enable server side paging of the data
@@ -281,19 +323,23 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
             storageManager.getOfflineODataProvider().addDefiningQuery(salesOrderItemsQuery);
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(myTag, "Exception encountered setting up offline store: " + e.getMessage());
+            Log.d(TAG, "Exception encountered setting up offline store: " + e.getMessage());
         }
 
         // Opens the offline store after defining all the "Defining Queries"
+        loadingTextView.setText("Opening the offline store.");
         boundService.openStore(storageManager.getOfflineODataProvider(), () -> {
+            runOnUiThread(() -> loadingTextView.setText("Successfully opened the offline store, downloading the latest changes."));
             storageManager.setESPMContainer(new ESPMContainer(storageManager.getOfflineODataProvider()));
-            Log.d(myTag, "Successfully opened offline store.");
+            Log.d(TAG, "Successfully opened offline store.");
             boundService.downloadStore(storageManager.getOfflineODataProvider(), () -> {
+                runOnUiThread(() -> loadingTextView.setText("Successfully downloaded the latest changes."));
                 setupPagedList();
                 addUserToList();
             }, null);
         }, (error) -> {
-            Log.d(myTag, "Failed to open offline store with error: " + error.toString());
+            Log.d(TAG, "Failed to open offline store with error: " + error.toString());
+            checkError(error.toString());
         });
     }
 
@@ -317,42 +363,43 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
      *      logs the user out.
      */
     public void onLogout() {
-        Log.d(myTag, "In onLogout");
+        Log.d(TAG, "In onLogout");
         storageManager.getOfflineODataProvider().upload(() -> {
             if (checkErrors()) {
                 runOnUiThread(() -> adapter.notifyDataSetChanged());
                 return;
             }
-            Log.d(myTag, "Successfully uploaded customer data.");
+            Log.d(TAG, "Successfully uploaded customer data.");
             toastAMessageFromBackground("Successfully synced all changed data.");
             unRegisterLogic();
         }, error -> {
-            Log.d(myTag, "Error while uploading personal store: " + error.getMessage());
+            Log.d(TAG, "Error while uploading personal store: " + error.getMessage());
             toastAMessageFromBackground("Sync failed, please check your network connection and the current backend data.");
         });
     }
 
     public void onRegister() {
-        Log.d(myTag, "In onRegister");
+        Log.d(TAG, "In onRegister");
         firstOpen = false;
-        registerMenuItem.setEnabled(false);
+        loginMenuItem.setVisible(false);
         loginTextView.setVisibility(View.GONE);
         loadingSpinnerParent.setVisibility(View.VISIBLE);
-
         setupOfflineStore();
-
     }
 
     private void addUserToList() {
-        Log.d(myTag, "In addUserToList");
+        Log.d(TAG, "In addUserToList");
         UserRoles roles = new UserRoles(ClientProvider.get(), settingsParameters);
         UserRoles.CallbackListener callbackListener = new UserRoles.CallbackListener() {
             @Override
             public void onSuccess(@NonNull UserInfo ui) {
-                Log.d(myTag, "Successfully registered");
-                Log.d(myTag, "Logged in User Id: " + ui.getId());
+                Log.d(TAG, "Successfully registered");
+                Log.d(TAG, "Logged in User Id: " + ui.getId());
+                createCustomerMenuItem.setVisible(true);
+                syncMenuItem.setVisible(true);
+                zeroItemMenuItem.setVisible(true);
                 currentUser = ui.getId();
-                getSupportActionBar().setTitle("Logged in as: " + currentUser);
+                getSupportActionBar().setTitle(currentUser);
                 finishLoading();
             }
 
@@ -372,31 +419,33 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
 
         Request request = new Request.Builder()
                 .post(RequestBody.create(null, ""))
-                .url(serviceURL + "/mobileservices/sessions/logout")
+                .url(SERVICE_URL + "/mobileservices/sessions/logout")
                 .build();
 
         Callback updateUICallback = new Callback() {
             @Override
             public void onFailure(@NonNull Call call, final IOException e) {
-                Log.d(myTag, "Log out failed: " + e.getLocalizedMessage());
+                Log.d(TAG, "Log out failed: " + e.getLocalizedMessage());
                 toastAMessageFromBackground("Log out failed, please check your network connection.");
             }
 
             @Override
             public void onResponse(@NonNull Call call, final Response response) {
                 if (response.isSuccessful()) {
-                    Log.d(myTag, "Successfully logged out");
+                    Log.d(TAG, "Successfully logged out");
                     runOnUiThread(() -> {
                         adapter.notifyDataSetChanged();
-                        registerMenuItem.setEnabled(true);
-                        unRegisterMenuItem.setEnabled(false);
+                        loginMenuItem.setVisible(true);
+                        createCustomerMenuItem.setVisible(false);
+                        syncMenuItem.setVisible(false);
+                        logoutMenuItem.setVisible(false);
+                        zeroItemMenuItem.setVisible(false);
                         loginTextView.setVisibility(View.VISIBLE);
                         currentUser = null;
                         getSupportActionBar().setTitle("Offline");
                     });
-                }
-                else {
-                    Log.d(myTag, "Log out failed " + response.networkResponse());
+                } else {
+                    Log.d(TAG, "Log out failed " + response.networkResponse());
                     toastAMessageFromBackground("Log out failed " + response.networkResponse());
                 }
             }
@@ -406,17 +455,23 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_activity_menu, menu);
-        registerMenuItem = menu.findItem(R.id.action_register);
-        unRegisterMenuItem = menu.findItem(R.id.action_unregister);
-        unRegisterMenuItem.setEnabled(false);
+        loginMenuItem = menu.findItem(R.id.action_register);
+        logoutMenuItem = menu.findItem(R.id.action_unregister);
+        createCustomerMenuItem = menu.findItem(R.id.action_create_customer);
+        zeroItemMenuItem = menu.findItem(R.id.action_zero_items);
+        syncMenuItem = menu.findItem(R.id.action_sync_changes);
+        logoutMenuItem.setVisible(false);
 
         if (firstOpen) {
             onRegister();
-        }
-        else if (storageManager.getOfflineODataProvider() != null) {
-            registerMenuItem.setEnabled(false);
+        } else if (storageManager.getOfflineODataProvider() != null) {
+            loginMenuItem.setVisible(false);
+            createCustomerMenuItem.setVisible(true);
+            syncMenuItem.setVisible(true);
+            zeroItemMenuItem.setVisible(true);
             setupPagedList();
             finishLoading();
         }
@@ -430,18 +485,16 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
         // Determine which option was selected and handle the action accordingly
         if (id == R.id.action_register) {
             onRegister();
-        }
-        else if (id == R.id.action_unregister) {
+        } else if (id == R.id.action_unregister) {
             onLogout();
-        }
-        else if (id == R.id.action_sync) {
+        } else if (id == R.id.action_sync_changes) {
+            item.setVisible(false);
             onSync();
-        }
-        else if (id == R.id.action_create) {
+        } else if (id == R.id.action_create_customer) {
             Intent intent = new Intent(this, CreateCustomerActivity.class);
+            intent.putExtra("parent_activity", "MainActivity");
             startActivity(intent);
-        }
-        else if (id == R.id.action_zero_items) {
+        } else if (id == R.id.action_zero_items) {
             zeroSalesOrderItems();
         }
         return super.onOptionsItemSelected(item);
@@ -478,10 +531,10 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
             int statusCode = httpStatusCodeProp.getNullableInt(error1) != null ? httpStatusCodeProp.getNullableInt(error1) : 0;
 
             // Log the error details to the console for debugging purposes
-            Log.e(myTag, "Message: " + message);
-            Log.e(myTag, "Body: " + body);
-            Log.e(myTag, "HTTP Status Code: " + statusCode);
-            Log.e(myTag, "Method: " + method);
+            Log.e(TAG, "Message: " + message);
+            Log.e(TAG, "Body: " + body);
+            Log.e(TAG, "HTTP Status Code: " + statusCode);
+            Log.e(TAG, "Method: " + method);
 
             // Based on the statusCode, we take different actions
             if (statusCode == 404) {
@@ -494,12 +547,11 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
                 }
                 // getInfo() gives the user the option to create a new customer according to the latest changes,
                 // since the customer intended to be updated has been deleted in the back-end.
-                Log.d(myTag, customer.toString());
+                Log.d(TAG, customer.toString());
                 getInfo(customer.toString());
                 storageManager.getESPMContainer().deleteEntity(errors.get(0));
                 return true;
-            }
-            else if (statusCode == 400) {
+            } else if (statusCode == 400) {
                 if (message.contains(ZERO_QUANTITY_ERROR_MESSAGE)) {
                     // A status code of 400 is a general error
                     storageManager.getESPMContainer().loadProperty(affectedEntityProp, error1, null);
@@ -510,7 +562,7 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
             }
         }
         // We then check to see if the errors have been resolved
-        Log.d(myTag, "Number of errors: " + errors.length());
+        Log.d(TAG, "Number of errors: " + errors.length());
         if (errors.length() > 0) {
             storageManager.getESPMContainer().deleteEntity(errors.get(0));
         }
@@ -579,16 +631,16 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
             String postalNumber = customerInfo.getString("PostalCode");
             String street = customerInfo.getString("Street");
             String dob = "2000-01-01T00:00:00";
-            Log.e(myTag, "city: " + city);
-            Log.e(myTag, "country: " + country);
-            Log.e(myTag, "email: " + email);
-            Log.e(myTag, "firstName： " + firstName);
-            Log.e(myTag, "lastName: " + lastName);
-            Log.e(myTag, "houseNumber: " + houseNumber);
-            Log.e(myTag, "phoneNumber: " + phoneNumber);
-            Log.e(myTag, "postalNumber: " + postalNumber);
-            Log.e(myTag, "street: " + street);
-            Log.e(myTag, "dob: " + dob);
+            Log.e(TAG, "city: " + city);
+            Log.e(TAG, "country: " + country);
+            Log.e(TAG, "email: " + email);
+            Log.e(TAG, "firstName： " + firstName);
+            Log.e(TAG, "lastName: " + lastName);
+            Log.e(TAG, "houseNumber: " + houseNumber);
+            Log.e(TAG, "phoneNumber: " + phoneNumber);
+            Log.e(TAG, "postalNumber: " + postalNumber);
+            Log.e(TAG, "street: " + street);
+            Log.e(TAG, "dob: " + dob);
             Intent i = new Intent(this, ChangeCustomerWarningActivity.class);
             i.putExtra("city", city);
             i.putExtra("country", country);
@@ -604,7 +656,7 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
             this.startActivity(i);
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e(myTag, "JSON error encountered: " + e.getMessage());
+            Log.e(TAG, "JSON error encountered: " + e.getMessage());
         }
     }
 
@@ -618,35 +670,38 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
         // can get feedback on our download progress. As of right now the backend OData service doesn't
         // send information about % downloads.
 
-
         // Tells the user the upload has started
-        toastAMessageFromBackground("Starting upload");
+        toastAMessageFromBackground("Starting upload.");
+        Log.d(TAG, "Starting upload.");
         // Attempts to upload the local offline store
         boundService.uploadStore(storageManager.getOfflineODataProvider(), () -> {
-            Log.d(myTag, "Successfully uploaded local customer data to the backend.");
+            Log.d(TAG, "Successfully uploaded local customer data to the backend.");
             toastAMessageFromBackground("Upload completed, starting download");
             // If the upload succeeds then we attempt to download
             // This ensures that we obtain changes made by other users
             boundService.downloadStore(storageManager.getOfflineODataProvider(), () -> {
                 toastAMessageFromBackground("Download completed, refreshing");
-                Log.d(myTag, "Local customer data has been updated from the backend.");
+                Log.d(TAG, "Local customer data has been updated from the backend.");
                 // We then check errors with the download/upload
                 checkErrors();
                 // Refresh the table to show us the newly downloaded data
                 factory.postLiveData.getValue().invalidate();
+                runOnUiThread(() -> menu.findItem(R.id.action_sync_changes).setVisible(true));
             }, (error) -> {
                 toastAMessageFromBackground("Download failed, check network connection");
-                Log.d(myTag, "Error downloading customer data from the backend: " + error.getMessage());
+                Log.d(TAG, "Error downloading customer data from the backend: " + error.getMessage());
                 factory.postLiveData.getValue().invalidate();
+                runOnUiThread(() -> menu.findItem(R.id.action_sync_changes).setVisible(true));
             });
         }, (error) -> {
             toastAMessageFromBackground("Upload failed, check network connection");
-            Log.d(myTag, "Error uploading the local customer data to the backend: " + error.getMessage());
+            Log.d(TAG, "Error uploading the local customer data to the backend: " + error.getMessage());
+            runOnUiThread(() -> menu.findItem(R.id.action_sync_changes).setVisible(true));
         });
     }
 
     private void finishLoading() {
-        unRegisterMenuItem.setEnabled(true);
+        logoutMenuItem.setVisible(true);
         recyclerView.setVisibility(View.VISIBLE);
         loadingSpinnerParent.setVisibility(View.GONE);
         loginTextView.setVisibility(View.GONE);
@@ -667,14 +722,16 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
         // Attempts to update the entity
         storageManager.getESPMContainer().updateEntity(salesOrderItem);
         storageManager.getOfflineODataProvider().upload(() -> checkErrors(), (error) ->
-            Log.e(myTag, "Error occurred while uploading SalesOrderItem with zero quantity: " + error.getMessage()));
+                Log.e(TAG, "Error occurred while uploading SalesOrderItem with zero quantity: " + error.getMessage()));
     }
 
     @Override
     public void onItemClick(View view, int position) {
-        customer = storageManager.getCustomersListToDisplay().getValue().get(position).customer;
-        Intent i = new Intent(this, ChangeCustomerDetailActivity.class);
-        startActivity(i);
+        if (storageManager.getCustomersListToDisplay().getValue().size() >= position) {
+            customer = storageManager.getCustomersListToDisplay().getValue().get(position).customer;
+            Intent i = new Intent(this, ChangeCustomerDetailActivity.class);
+            startActivity(i);
+        }
     }
 
     @Override

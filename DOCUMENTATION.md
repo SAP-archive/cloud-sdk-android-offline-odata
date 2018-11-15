@@ -1,6 +1,7 @@
 # SAP Cloud Platform SDK for Android Offline OData Sample Documentation
 
 ## Table of Contents
+
 - [Creating the Offline Store](#creating-the-offline-store)
 - [Adding Defining Queries After Opening Store](#adding-defining-queries-after-opening-store)
 - [Creating Entities](#creating-entities)
@@ -16,6 +17,7 @@
 See also [README.md](README.md)
 
 ## Creating the Offline Store
+
 There are a few things to take into account when creating an offline store. First of all, you must identify what data needs to be available offline. It is best to only download what is needed because large downloads will slow down the offline store's initial open time. Additionally, permitting the user to only download a subset of the data relevant to them can reduce the possibility of two users modifying the same data when offline.
 
 Next, you need to set up the [Application Configuration File](https://help.sap.com/doc/c2d571df73104f72b9f1b73e06c5609a/Latest/en-US/docs/user-guide/odata/Offline_OData_Defining_Application_Configuration_File.html#application-configuration-file), which is used to specify many properties about how offline data will be handled in your application.  Below is an example of an application configuration file.
@@ -42,7 +44,7 @@ To view or change the application configuration file for the application go to t
 
 ![Application configuration file button screenshot](images/applicationConfigurationFile.png)
 
-Finally, you must create and open the store from within your code. The rest of this section will walk you through these steps. To choose which data the application downloads to the offline store, you need to create some [Defining Queries](https://help.sap.com/doc/c2d571df73104f72b9f1b73e06c5609a/Latest/en-US/docs/user-guide/odata/Offline_OData_Defining_Application_Configuration_File.html#defining-queries), and add them to the `OfflineODataProvider` as shown in the image below. The offline application already has some defining queries set up, in the `setupOfflineStore` method found in `MainActivity.java`. The offline store for the offline application will store **Products**, **Customers**, **Sales Order Headers**, and **Sales Order Items** in this example.
+Finally, you must create and open the store from within your code. The rest of this section will walk you through these steps. To choose which data the application downloads to the offline store, you need to create some [Defining Queries](https://help.sap.com/doc/c2d571df73104f72b9f1b73e06c5609a/Latest/en-US/docs/user-guide/odata/Offline_OData_Defining_Application_Configuration_File.html#defining-queries), and add them to the `OfflineODataProvider` as shown in the image below. The offline application already has some defining queries set up in the `setupOfflineStore` method found in `MainActivity.java`. The offline store for the offline application will store **Products**, **Customers**, **Sales Order Headers**, and **Sales Order Items** in this example.
 
 ```Java
 storageManager.setOfflineODataProvider(new OfflineODataProvider(url, offParam, ClientProvider.get(), null, null));
@@ -56,7 +58,7 @@ storageManager.getOfflineODataProvider().addDefiningQuery(salesOrderQuery);
 storageManager.getOfflineODataProvider().addDefiningQuery(salesOrderItemsQuery);
 ```
 
-Creating\opening the offline store is as easy as implementing the `setupOfflineStore` method in your code and then calling it when you want to setup the offline store. Below is an example `setupOfflineStore` implementation. The full implementation can be found in the sample project in `MainActivity.java`.
+Creating/opening the offline store is as easy as implementing the `setupOfflineStore` method in your code and then calling it when you want to setup the offline store. Below is an example `setupOfflineStore` implementation. The full implementation can be found in the sample project in `MainActivity.java`.
 
 ```Java
 private void setupOfflineStore() {
@@ -66,8 +68,7 @@ private void setupOfflineStore() {
         URL url = new URL(serviceURL + "/" + connectionID);
         OfflineODataParameters offParam = new OfflineODataParameters();
         ...
-        storageManager.setOfflineODataProvider(new OfflineODataProvider(url, offParam, ClientProvider.get(),
-                                                                        null, null));
+        storageManager.setOfflineODataProvider(new OfflineODataProvider(url, offParam, ClientProvider.get(), null, null));
         ...
     } catch (Exception e) {
         e.printStackTrace();
@@ -84,7 +85,8 @@ private void setupOfflineStore() {
 ```
 
 ## Adding Defining Queries After Opening Store
-You can create **Defining Queries** either before the offline store is opened for the first time, or afterwards. It is better to create them all for the initial offline store open, because then all of the setup takes place at the same time. However, if you need to create **Defining Queries** elsewhere in code, simply use the `addDefiningQuery` method as before. After the defining queries are added you must perform a download with the `OfflineODataProvider` to retrieve the data referenced by the newly added defining queries.
+
+You can create **Defining Queries** either before the offline store is opened for the first time, or afterwards. It is better to create them all for the initial offline store open, because then all of the setup takes place at the same time. However, if you need to create **Defining Queries** elsewhere in code, simply use the `addDefiningQuery` method as before. After the defining queries are added, you must perform a download with the `OfflineODataProvider` to retrieve the data referenced by the newly added defining queries.
 
 The below code snippet shows how to add a new defining query to an already open store, followed by the required download operation. The defining queries can be seen in `MainActivity.java`.
 
@@ -112,9 +114,10 @@ try {
 ```
 
 ## Creating Entities
+
 Creating entities using the offline API is similar to creating entities with the online API with a few key differences. The first difference is that when the `createEntity` method is called, the corresponding entity is only created locally on the offline store. This new entity is not present on the backend until a successful **upload** has been performed. When creating an entity locally, it is important to note that the primary key might be created by the server when the entity is uploaded, and these changes will be reflected on the local copy of the entity once it is re-downloaded.
 
-To ensure that we always have access to the newly created entity, both before and after it is uploaded and re-downloaded from the backend, we must keep track of its `readLink`. This provides a way to access the entity even if its primary key is changed by the backend when it is uploaded. Below is a code sample showing this entire process. Please examine the comments of the code snippet for a detailed description of the process.
+To ensure that we always have access to the newly created entity, both before and after it is uploaded and re-downloaded from the backend, we must keep track of its `readLink`. This provides a way to access the entity even if its primary key is changed by the backend when it is uploaded. Below is a code sample for creating an entity locally.
 
 ```Java
 // First we create a customer with default properties
@@ -127,9 +130,13 @@ newCustomer.setLastName(lastNameField.getText().toString());
 ...
 newCustomer.unsetDataValue(Customer.customerID);
 storageManager.getOfflineODataProvider().createEntity(newCustomer, null, null);
+// These log statements will show locally generated information, because the customer hasn't been synced
 Log.d(myTag, "Read Link: " + newCustomer.getReadLink());
 Log.d(myTag, "Edit Link: " + newCustomer.getEditLink());
+```
 
+If you want to examine the difference in `readLink` and `editLink`, the below code sample demonstrates values changing after a successful sync
+```Java
 // Before uploading, the customer does not have an ID (it's generated by the server)
 Log.d(myTag, "Customer ID is set: " + newCustomer.hasDataValue(Customer.customerID));
 storageManager.getOfflineODataProvider().upload(() -> {
@@ -156,6 +163,7 @@ storageManager.getOfflineODataProvider().upload(() -> {
     Log.e(myTag, "Error during upload: " + error.getMessage());
 });
 ```
+
 In the below screenshot, we can see how the server will change the `readLink` of the customer.
 
 ![Readlink has been changed in the backend](images/readlink_changed_by_backend.png)
@@ -203,23 +211,20 @@ In the sample app, a `sync` is two operations in one: an upload, followed by a d
 
 ## Performing a Sync Using a Foreground Service
 
-The app performs synchronization using a [Service](https://developer.android.com/guide/components/services).  The sample app attaches the offline store functionality to a service, which tells the O/S not to kill the offline store processes if the app enters the background. In the project, the `OfflineODataForegroundService.java` file contains the code for our service. Our custom service wraps the offline store methods `open`, `download` and `upload` using the following code.
+The app performs synchronization using a [Service](https://developer.android.com/guide/components/services).  The sample app attaches the offline store functionality to a service, which tells the OS not to kill the offline store processes if the app enters the background. In the project, the `OfflineODataForegroundService.java` file contains the code for our service. Our custom service wraps the offline store methods `open`, `download` and `upload` using the following code.
 
 ```Java
-public void openStore(OfflineODataProvider offlineODataProvider, @Nullable final Action0 successHandler,
-    @Nullable final Action1<OfflineODataException> failureHandler) {
+public void openStore(OfflineODataProvider offlineODataProvider, @Nullable final Action0 successHandler, @Nullable final Action1<OfflineODataException> failureHandler) {
     Task task = new Task(Operation.OPEN, offlineODataProvider, successHandler, failureHandler);
     startTask(task);
 }
 
-public void downloadStore(OfflineODataProvider offlineODataProvider, @Nullable final Action0 successHandler,
-    @Nullable final Action1<OfflineODataException> failureHandler) {
+public void downloadStore(OfflineODataProvider offlineODataProvider, @Nullable final Action0 successHandler, @Nullable final Action1<OfflineODataException> failureHandler) {
     Task task = new Task(Operation.DOWNLOAD, offlineODataProvider, successHandler, failureHandler);
     startTask(task);
 }
 
-public void uploadStore(OfflineODataProvider offlineODataProvider, @Nullable final Action0 successHandler,
-    @Nullable final Action1<OfflineODataException> failureHandler) {
+public void uploadStore(OfflineODataProvider offlineODataProvider, @Nullable final Action0 successHandler, @Nullable final Action1<OfflineODataException> failureHandler) {
     Task task = new Task(Operation.UPLOAD, offlineODataProvider, successHandler, failureHandler);
     startTask(task);
 }
@@ -230,6 +235,7 @@ The `OfflineODataForegroundService` class also contains another class, namely `T
 ![Offline service produces a notification](images/offline_notification.png)
 
 There are a few key components in `MainActivity.java` that allow this service to operate. First of all, we need a few variables declared.
+
 ```Java
 // Don't attempt to unbind from the service unless the client has received some
 // information about the service's state.
@@ -259,7 +265,6 @@ private ServiceConnection connection = new ServiceConnection() {
         boundService = null;
     }
 };
-
 ```
 
 The following two methods need to be added to allow the service to attach to the activity.
@@ -304,10 +309,11 @@ protected void onDestroy() {
     // ...
 }
 ```
-Since the service wraps the offline store's open, upload, and download methods, we use the wrapped methods when we want to perform such an operation, which can be seen in the `onSync` method shown above. 
 
+Since the service wraps the offline store's open, upload, and download methods, we use the wrapped methods when we want to perform such an operation, which can be seen in the `onSync` method shown above.
 
 ## Highlighting Changed Entities
+
 When you update your local data by performing a download from the backend, you can determine which entities have been added or updated using a filter on a `DataQuery`. The `DataQuery` is used to filter the data. The code snippet below shows an example of such a `DataQuery`.
 
 ```Java
@@ -327,10 +333,10 @@ The sample application highlights 4 states which are described in the below tabl
 
 | Icon          | Name          | Meaning       |
 | ------------- | ------------- | :------------ |
-| ![Yellow exclamation mark for new entries](images/ic_yellow_bang_two.png)  |  New Entry | An entry is considered to be **new** when it has either been updated and synchronized with the backend since the user started working on the app, or is a newly downloaded entry. If another user makes a change to the backend and then sync's it, upon downloading the database again, the entry will be highlighted with a yellow exclamation mark. |
+| ![Yellow exclamation mark for new entries](images/ic_yellow_bang_two.png)  |  New Entry | An entity is considered to be in the **new** state if the row was returned from the `upsertedLastDownload()` filter.  If so, the `isUpdated` field is set to `true`. This field is updated when a download occurs. All newly downloaded entries will be shown with the yellow exclamation mark. |
 | ![Orange refresh image for local entries](images/ic_local_state.png)  | Local Entry | When entities are updated locally but not yet synchronized with the backend, it would be useful to highlight those changed entities, so the user knows they have to perform a sync. This state is known as the **local** state, and entities are considered to be in the **local** state when the `EntityValue.isLocal()` method returns `true`. Entities in the local state are indicated with an orange "refresh" image. |
 | ![Red exclamation mark for error entities](images/ic_error_state.png)  | Error State | Entities are in the **error** state if something goes wrong. Similarly to local entities, the `EntityValue.getInErrorState()` method returns whether or not the entity is in the **error** state. Entities in the error state are indicated with a red exclamation mark.  |
-| ![Sample default profile picture](images/ic_empty_dot.png) | Default | Entities without a special state should be shown using some default image, such as an empty status dot. |
+| ![Sample default profile picture](images/ic_empty_dot.png) | Default | Entities without a special state in this example are shown using a an empty status dot. |
 
 The following code snippet shows how we highlight these entities in our recycler view, which uses **Fiori Object Cells** to display the customer information. Make sure to consult the comments in the code snippet for a detailed description of what each line does. This `onBindViewHolder` method implementation can also be found in the Offline app's `CustomerRecyclerViewAdapter.java` file. In a custom project, you would need to provide your own image resources.
 
@@ -373,6 +379,7 @@ public void onBindViewHolder(ViewHolder holder, int position) {
 See [OfflineODataQueryFunction](https://help.sap.com/doc/c2d571df73104f72b9f1b73e06c5609a/Latest/en-US/docs/javadoc/offline-odata-api-doc/reference/com/sap/cloud/mobile/odata/offline/OfflineODataQueryFunction.html) for more information.
 
 ## Delta Tracking
+
 In many cases the dataset that you are working with will be very large. A user's experience could suffer if they are forced to wait for a long download to finish every time they sync their changes.  With **Delta Tracking** enabled OData services, only entities that have been changed relative to the current state of the offline store will be downloaded, significantly reducing the amount of data transferred.  **Delta Tracking** is configured in your application configuration file from the Mobile Services Cockpit. The `track_deltas` property default value is auto which means it will make use of the OData service's delta tracking when available between the OData service and Mobile Services and will implement delta tracking between Mobile Services and the client.
 
 ![Offline section in mobile services cockpit](images/offline_section.png)
@@ -381,11 +388,10 @@ In many cases the dataset that you are working with will be very large. A user's
 
 ![Track Deltas property in defining query configuration](images/track_deltas_for_defining_query.png)
 
-
-
 See [Using Defining Queries to Build Entity Relationships](https://help.sap.com/doc/c2d571df73104f72b9f1b73e06c5609a/Latest/en-US/docs/user-guide/odata/Offline_OData_Defining_Application_Configuration_File.html#using-defining-queries-to-build-entity-relationships) for more information.
 
 ## Repeatable Requests
+
 There are many ways that communication issues could interrupt a client request from receiving a response from the backend. In these cases, it is critical that the requests are only applied to the backend data once, since problems such as double billing could occur. This is where **Repeatable Requests** come in. They add specific headers to the requests made from the client, which are checked by Mobile Services. Mobile Services then ensures that the requests are only applied once. On the client side, repeatable requests are enabled by default, so **no action needs to be taken**. However, you can enable repeatable requests between Mobile Services and the OData backend. To do so, you need to add the following line to the application configuration file.
 
 ```ini
@@ -397,10 +403,11 @@ check_repeatable_requests=Y
 For more information about repeatable requests you can visit the [Repeatable Requests](https://help.sap.com/doc/c2d571df73104f72b9f1b73e06c5609a/Latest/en-US/docs/user-guide/odata/Offline_OData_Repeatable_Requests.html) page of the documentation.
 
 ## Indexing Entities
+
 Through the application configuration file, entities can be indexed based on their properties, for example a customer's last name or a product's description. On small datasets indexing might not make a noticeable change in the speed of query operations, however it can reduce lookup times significantly as the amount of data grows.
 
 To add an index to your data, a line with this syntax must be added to your Mobile Services application configuration file.
-```indexed_type=<Entity namespace>.<Entity name>:<Property name>```. 
+```indexed_type=<Entity namespace>.<Entity name>:<Property name>```.
 
 The below is an example.
 
@@ -413,6 +420,7 @@ The above example creates an index corresponding to the customers' `lastName` pr
 ![Adding an index entry to the application configuration](images/adding_an_indexed_property.png)
 
 ## Error Handling
+
 When syncing changes made while offline, conflicts can occur.  One example might be if two people attempted to update a description field of the same product.  Another might be updating a record that was deleted by another user.  The **Offline OData API** provides a way to access the `ErrorArchive`, which stores details of conflicts. There are a few types of errors the app handles, detailed in the table below.
 
 | Code  | Meaning | How to produce the error |
@@ -476,7 +484,9 @@ if (statusCode == 400) {
     }
 }
 ```
+
 The code that sends a SalesOrderItem with quantity 0 can be found in `MainActivity.java` and is also shown below.
+
 ```Java
 private void zeroSalesOrderItems() {
     // Setup the data query to get the sales order items
@@ -492,6 +502,7 @@ private void zeroSalesOrderItems() {
         Log.e(myTag, "Error occurred while uploading SalesOrderItem with zero quantity: " + error.getMessage()));
 }
 ```
+
 Since this create request will produce a **backend data violation**, we'll need to prompt the user to enter the correct value.
 We do so by using the `changeQuantity` method. The `changeQuantity` method simply produces a prompt for the user to fill in the correct data.
 
@@ -499,15 +510,12 @@ We do so by using the `changeQuantity` method. The `changeQuantity` method simpl
 private void changeQuantity(SalesOrderItem salesOrderItem) {
     // This dialog could also be provided by the Fiori Onboarding Library
     // We create the dialog using an AlertDialog.Builder
-    AlertDialog.Builder builder =
-                  new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_NoActionBar_MinWidth);
+    AlertDialog.Builder builder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_NoActionBar_MinWidth);
     builder.setMessage("The quantity must be greater than 0. Update the quantity below.");
     builder.setTitle("Change Quantity");
 
     // Set up the input
-    View viewInflated = LayoutInflater.from(this).inflate(R.layout.quantity_edit_text_layout,
-                                                          findViewById(android.R.id.content),
-                                                          false);
+    View viewInflated = LayoutInflater.from(this).inflate(R.layout.quantity_edit_text_layout, findViewById(android.R.id.content), false);
     final EditText input = (EditText) viewInflated.findViewById(R.id.input);
     input.setText(String.format("%.0f", salesOrderItem.getQuantity()));
     builder.setView(viewInflated);
@@ -560,7 +568,9 @@ if (statusCode == 404) {
     return true;
 }
 ```
+
 As described in the comments, the `getInfo()` function captures the customer causing the problems, and allows the user to create a new customer with identical details.
+
 ```Java
 private void getInfo(String customerInformation) {
     // We use a JSON Object parser to read the body
@@ -575,6 +585,7 @@ private void getInfo(String customerInformation) {
     this.startActivity(i);
 }
 ```
+
 The full implementation can be found in `MainActivity.java`.
 
 For more information on error handling visit [Handling Errors and Conflicts](https://help.sap.com/doc/c2d571df73104f72b9f1b73e06c5609a/Latest/en-US/docs/user-guide/odata/Offline_OData_Handling_Errors_And_Conflicts.html) and [Handling Failed Requests](https://help.sap.com/doc/c2d571df73104f72b9f1b73e06c5609a/Latest/en-US/docs/user-guide/odata/Offline_OData_Handling_Failed_Requests.html)
@@ -624,4 +635,3 @@ public void loadInitial(@NonNull LoadInitialParams<DataQuery> params,
 This method is called to load the **first** page of data into the app, providing a link to the next page of data in the `callback.onResult` call at the end. The `nextLink` approach lends itself well to the [PageKeyedDataSource](https://developer.android.com/reference/android/arch/paging/PageKeyedDataSource) way of loading data into a `PagedList`.
 
 For more information regarding client and server side paging visit [Using the OData API](https://help.sap.com/doc/c2d571df73104f72b9f1b73e06c5609a/Latest/en-US/docs/user-guide/odata/Using_OData_API.html). For more information regarding the Android Paging library, check the official Google documentation at [Paging Library Overview](https://developer.android.com/topic/libraries/architecture/paging/).
-

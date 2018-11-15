@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerPageKeyedDataSource extends PageKeyedDataSource<DataQuery, CustomerListItem> {
+    private static final String TAG =  "myDebuggingTag";
     private ESPMContainer espmContainer;
 
     CustomerPageKeyedDataSource(ESPMContainer espmContainer) {
@@ -24,7 +25,7 @@ public class CustomerPageKeyedDataSource extends PageKeyedDataSource<DataQuery, 
     // this method is called to load the first page of data
     @Override
     public void loadInitial(@NonNull LoadInitialParams<DataQuery> params, @NonNull LoadInitialCallback<DataQuery, CustomerListItem> callback) {
-        Log.d("myDebuggingTag", "Load Initial called.");
+        Log.d(TAG, "Load Initial called.");
         DataQuery pageQuery = new DataQuery().from(ESPMContainerMetadata.EntitySets.customers).orderBy(Customer.lastName);  // .page(10) not needed here as set in setupOfflineStore
         QueryResult result = espmContainer.executeQuery(pageQuery);
         List<Customer> customersList = Customer.list(result.getEntityList());
@@ -38,10 +39,9 @@ public class CustomerPageKeyedDataSource extends PageKeyedDataSource<DataQuery, 
         callback.onResult(customerListItems, null, result.getNextQuery());
     }
 
-    // TODO unclear when this method would be called, currently is not called
     @Override
     public void loadBefore(@NonNull LoadParams<DataQuery> params, @NonNull LoadCallback<DataQuery, CustomerListItem> callback) {
-        Log.d("myDebuggingTag", "Load Before called.");
+        Log.d(TAG, "Load Before called.");
         DataQuery pageQuery = params.key;
         QueryResult result = espmContainer.executeQuery(pageQuery);
         List<Customer> customersList = Customer.list(result.getEntityList());
@@ -60,7 +60,7 @@ public class CustomerPageKeyedDataSource extends PageKeyedDataSource<DataQuery, 
     // this method is called to load the next page of data as the recycler view is scrolled
     @Override
     public void loadAfter(@NonNull LoadParams<DataQuery> params, @NonNull LoadCallback<DataQuery, CustomerListItem> callback) {
-        Log.d("myDebuggingTag", "Load After called.");
+        Log.d(TAG, "Load After called.");
         DataQuery pageQuery = params.key;
         QueryResult result = espmContainer.executeQuery(pageQuery);
         List<Customer> customersList = Customer.list(result.getEntityList());

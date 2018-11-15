@@ -8,7 +8,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath group: 'com.sap.cloud.android', name: 'odata-android-gradle-plugin', version: '1.1.2'
+        classpath group: 'com.sap.cloud.android', name: 'odata-android-gradle-plugin', version:sdkVersion
     }
 }
 
@@ -55,11 +55,11 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    implementation 'com.sap.cloud.android:foundation:1.1.2'
-    implementation 'com.sap.cloud.android:odata:1.1.2'
-    implementation 'com.sap.cloud.android:offline-odata:1.1.2'
+    implementation group: 'com.sap.cloud.android', name: 'fiori', version:sdkVersion
+    implementation group: 'com.sap.cloud.android', name: 'odata', version:sdkVersion
+    implementation group: 'com.sap.cloud.android', name: 'offline-odata', version:sdkVersion
+    implementation group: 'com.sap.cloud.android', name: 'foundation', version:sdkVersion
     implementation 'com.github.tony19:logback-android:1.1.1-13'
-    implementation 'com.sap.cloud.android:fiori:1.1.2'
     implementation "android.arch.paging:runtime:1.0.0"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

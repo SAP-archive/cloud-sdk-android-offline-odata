@@ -28,17 +28,16 @@ public class ChangeCustomerWarningActivity extends AppCompatActivity {
     public void onContinue(View view){
         Bundle extras = getIntent().getExtras();
         if (extras != null){
-            String firstName = ((String) extras.getString("firstName"));
-            String lastName = ((String) extras.getString("lastName"));
-            String email = ((String) extras.getString("email"));
-            String street = ((String) extras.getString("street"));
-            String postalNumber = ((String) extras.getString("postalNumber"));
-            String phoneNumber = ((String) extras.getString("phoneNumber"));
-            String city = ((String) extras.getString("city"));
-            String dob = ((String) extras.getString("dob"));
-            String houseNumber = ((String) extras.getString("houseNumber"));
-            String country = (String) extras.getString("country");
-
+            String firstName = extras.getString("firstName");
+            String lastName = extras.getString("lastName");
+            String email = extras.getString("email");
+            String street = extras.getString("street");
+            String postalNumber = extras.getString("postalNumber");
+            String phoneNumber = extras.getString("phoneNumber");
+            String city = extras.getString("city");
+            String dob = extras.getString("dob");
+            String houseNumber = extras.getString("houseNumber");
+            String country = extras.getString("country");
             Intent i = new Intent(this, CreateCustomerActivity.class);
             i.putExtra("parent_activity", CHANGE_CUSTOMER_WARNING_CLASS_NAME);
             i.putExtra("city", city);

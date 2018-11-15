@@ -22,6 +22,7 @@
         android:layout_below="@+id/profile_header">
 
         <LinearLayout
+            android:padding="@dimen/key_line_16dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -31,83 +32,88 @@
                 android:id="@+id/tv_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/FioriTextStyle.OVERLINE"
                 android:padding="5dp"
-                android:text="Address："
-                android:textSize="18sp" />
+                android:text="Address："/>
 
             <EditText
                 android:id="@+id/address_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:selectAllOnFocus="true" />
+                android:selectAllOnFocus="true"
+                android:layout_marginBottom="@dimen/key_line_16dp"/>
 
             <TextView
                 android:id="@+id/tv_postal_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="41dp"
+                android:padding="5dp"
                 android:text="Postal Code："
-                android:textSize="18sp" />
+                style="@style/FioriTextStyle.OVERLINE" />
 
             <EditText
                 android:id="@+id/postal_code_edittext"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/key_line_16dp"/>
 
             <TextView
                 android:id="@+id/tv_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="41dp"
+                android:padding="5dp"
                 android:text="Phone："
-                android:textSize="18sp" />
+                style="@style/FioriTextStyle.OVERLINE"/>
 
             <EditText
                 android:id="@+id/phone_edittext"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/key_line_16dp"/>
 
 
             <TextView
                 android:id="@+id/tv_city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="41dp"
+                android:padding="5dp"
                 android:text="City："
-                android:textSize="18sp" />
+                style="@style/FioriTextStyle.OVERLINE"/>
 
             <EditText
                 android:id="@+id/city_edittext"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/key_line_16dp"/>
 
             <TextView
                 android:id="@+id/tv_dob"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="41dp"
+                android:padding="5dp"
                 android:text="Date of Birth："
-                android:textSize="18sp" />
+                style="@style/FioriTextStyle.OVERLINE"/>
 
             <EditText
                 android:id="@+id/dob_edittext"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/key_line_16dp"/>
 
 
             <TextView
                 android:id="@+id/tv_house_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="41dp"
+                android:padding="5dp"
                 android:text="House Number："
-                android:textSize="18sp" />
+                style="@style/FioriTextStyle.OVERLINE"/>
 
             <EditText
                 android:id="@+id/house_num_edittext"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/key_line_16dp"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

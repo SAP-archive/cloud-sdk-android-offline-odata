@@ -1,5 +1,6 @@
 package com.example.android.offline;
 
+import android.app.Dialog;
 import android.arch.lifecycle.Observer;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
@@ -20,7 +21,9 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -336,7 +339,29 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
                 runOnUiThread(() -> loadingTextView.setText("Successfully downloaded the latest changes."));
                 setupPagedList();
                 addUserToList();
-            }, null);
+            }, (error) -> {
+                Log.d(TAG, "Failed to download offline store with error: " + error.toString());
+                android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(MainActivity.this, android.R.style.Theme_DeviceDefault_Dialog_NoActionBar_MinWidth)
+                        .setMessage("Failed to download offline store. Ensure you have Internet connection and try again.")
+                        .setCancelable(false)
+                        .setOnKeyListener(new Dialog.OnKeyListener() {
+                            @Override
+                            public boolean onKey(DialogInterface arg0, int keyCode, KeyEvent event) {
+                                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                                    finish();
+                                }
+                                return true;
+                            }
+                        })
+                        .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                onRegister();
+                            }
+                        });
+                runOnUiThread(() -> {
+                    alert.show();
+                });
+            });
         }, (error) -> {
             Log.d(TAG, "Failed to open offline store with error: " + error.toString());
             checkError(error.toString());
@@ -585,6 +610,8 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.quantity_edit_text_layout, findViewById(android.R.id.content), false);
         final EditText input = (EditText) viewInflated.findViewById(R.id.input);
         input.setText(String.format("%.0f", salesOrderItem.getQuantity()));
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+
         builder.setView(viewInflated);
 
         // Set up the buttons
@@ -594,6 +621,7 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
                 String inputQuantity = input.getText().toString();
                 BigDecimal newQuantity = new BigDecimal(inputQuantity);
                 salesOrderItem.setQuantity(newQuantity);
+                Log.d(TAG,"Updated bad request with new quantity: " + newQuantity);
 
                 // Attempt to update the entity and possibly call checkErrors()
                 storageManager.getESPMContainer().updateEntity(salesOrderItem);
@@ -605,6 +633,7 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
                 storageManager.getESPMContainer().deleteEntity(salesOrderItem);
+                Log.d(TAG,"Removed bad request.");
             }
         });
 

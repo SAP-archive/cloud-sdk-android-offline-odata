@@ -82,8 +82,8 @@ import static com.example.android.offline.ChangeCustomerDetailActivity.customer;
 import static com.example.android.offline.StorageManager.adapter;
 
 public class MainActivity extends AppCompatActivity implements CustomerRecyclerViewAdapter.ItemClickListener {
-    private final static String USER_NUMBER = "i501130";
-    private final static String OAUTH_CLIENT_ID = "96bc0a62-0fcc-4da0-842b-458460664b6f";
+    private final static String USER_NUMBER = "p1743065160";
+    private final static String OAUTH_CLIENT_ID = "1149245f-2655-48ab-a597-d4ef45ceab71";
 
     public final static String TAG = "myDebuggingTag";
     public final static String APP_ID = "com.sap.offline";
@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements CustomerRecyclerV
             Log.d(TAG, "Shared Offline Store failed to open. Check Cockpit for MultiUser project.");
             runOnUiThread(() -> {
                 findViewById(R.id.loading_spinner).setVisibility(View.GONE);
-                ((TextView) findViewById(R.id.loading_text_view)).setText("Failed to open Shared Offline Store. Make sure that the user has Offline project in Cockpit.");
+                ((TextView) findViewById(R.id.loading_text_view)).setText("Failed to open Shared Offline Store. Make sure that the Offline project exists in the Mobile Servcies Cockpit.");
             });
         } else if (error.contains("unauthorized_client")) {
             Log.d(TAG, "Shared Offline Store failed to open. Check OAUTH_CLIENT_ID in MainActivity.java file.");

@@ -48,6 +48,8 @@ Click **Save**, and the rest of the details for the OAuth configuration such as 
 
 Open the project in Android Studio.
 
+Click update if asked to update the Android Gradle plugin.
+
 To successfully run the application, the OAuth string constants in the application need to be changed to reflect the new values. In the project, press `Ctrl + N` on Windows, or `Command + O` on Mac, and navigate to `MainActivity.java` and change the constants at the top of the file to match your username and client ID.
 
 ![Update the constants at the top of the MainActivity file](images/update_oauth_constants.png)

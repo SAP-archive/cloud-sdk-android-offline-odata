@@ -1,5 +1,7 @@
 # SAP Cloud Platform SDK for Android Offline OData Sample
 
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/cloud-sdk-android-offline-odata)](https://api.reuse.software/info/github.com/SAP-samples/cloud-sdk-android-offline-odata)
+
 ## Description
 
 This sample app showcases the functionality of an [Offline OData](https://help.sap.com/viewer/70ac991a4f734773b1892a8d0d45eabc/Cloud/en-US/4b2ef65d23eb48b5adbdd6e83fa5ff20.html) app.  The first time the app opens, it downloads a portion of the backend's data, enabling the user to make changes to the data locally. The user doesn't need a working internet connection to make changes once the initial download has completed.  Working against an on device offline store instead of a remote backend can improve performance.  When an internet connection is available, the user can synchronize their local changes with the backend.

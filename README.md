@@ -1,4 +1,4 @@
-# SAP Cloud Platform SDK for Android Offline OData Sample
+# SAP BTP SDK for Android Offline OData Sample
 
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/cloud-sdk-android-offline-odata)](https://api.reuse.software/info/github.com/SAP-samples/cloud-sdk-android-offline-odata)
 
@@ -8,7 +8,7 @@ This sample app showcases the functionality of an [Offline OData](https://help.s
 
 This sample app will show how to indicate to the user which data has changed locally and has yet to be synchronized with the backend.  Additionally, it will show how to deal with differences between data in the user's local database and the backend.
 
-If you are new to the SAP Cloud Platform SDK for Android, [Get Started with SAP Cloud Platform SDK for Android](https://developers.sap.com/mission.sdk-android-get-started.html), [Step by Step with the SAP Cloud Platform SDK for Android](https://blogs.sap.com/2018/10/15/step-by-step-with-the-sap-cloud-platform-sdk-for-android-part-1/) series, and the [SAP Cloud Platform SDK for Android Learning Journey](https://help.sap.com/doc/221f8f84afef43d29ad37ef2af0c4adf/HP_2.0/en-US/747d6d2ea0534ba99612920c7402631a.html) are great places to start.
+If you are new to the SAP BTP SDK for Android, [Get Started with SAP BTP SDK for Android](https://developers.sap.com/mission.sdk-android-get-started.html), [Step by Step with the SAP BTP SDK for Android](https://blogs.sap.com/2018/10/15/step-by-step-with-the-sap-cloud-platform-sdk-for-android-part-1/) series, and the [SAP BTP SDK for Android Learning Journey](https://help.sap.com/doc/221f8f84afef43d29ad37ef2af0c4adf/HP_2.0/en-US/747d6d2ea0534ba99612920c7402631a.html) are great places to start.
 
 ## The Finished Product
 
@@ -21,10 +21,10 @@ Let's start setting up this project!
 ## Requirements
 
 * [Android Studio](https://developer.android.com/studio/index.html) version 3.4
-* [SAP Cloud Platform SDK for Android from Trial Downloads](https://www.sap.com/developer/trials-downloads/additional-downloads/sap-cloud-platform-sdk-for-android-15508.html) or [SAP Cloud Platform SDK for Android from Software Downloads](https://launchpad.support.sap.com/#/softwarecenter/template/products/_APP=00200682500000001943&_EVENT=NEXT&HEADER=Y&FUNCTIONBAR=Y&EVENT=TREE&NE=NAVIGATE&ENR=73555000100800001281&V=MAINT&TA=ACTUAL/SAP%20CP%20SDK%20FOR%20AND) version 2.1.1
-* [SAP Cloud Platform Trial](https://cloudplatform.sap.com/index.html)
+* [SAP BTP SDK for Android from Trial Downloads](https://www.sap.com/developer/trials-downloads/additional-downloads/sap-cloud-platform-sdk-for-android-15508.html) or [SAP BTP SDK for Android from Software Downloads](https://launchpad.support.sap.com/#/softwarecenter/template/products/_APP=00200682500000001943&_EVENT=NEXT&HEADER=Y&FUNCTIONBAR=Y&EVENT=TREE&NE=NAVIGATE&ENR=73555000100800001281&V=MAINT&TA=ACTUAL/SAP%20CP%20SDK%20FOR%20AND) version 2.1.1
+* [SAP BTP Trial](https://cloudplatform.sap.com/index.html)
 
-The blog [Step by Step with the SAP Cloud Platform SDK for Android](https://blogs.sap.com/2018/10/15/step-by-step-with-the-sap-cloud-platform-sdk-for-android-part-1/) contains additional details on how to setup and install the SDK, how to register for a trial version of the SAP Cloud Platform, and how to enable Mobile Services.
+The blog [Step by Step with the SAP BTP SDK for Android](https://blogs.sap.com/2018/10/15/step-by-step-with-the-sap-cloud-platform-sdk-for-android-part-1/) contains additional details on how to setup and install the SDK, how to register for a trial version of the SAP BTP, and how to enable Mobile Services.
 
 ## Setting Up Mobile Services
 

@@ -1,3 +1,8 @@
+![](https://img.shields.io/badge/STATUS-NOT%20CURRENTLY%20MAINTAINED-red.svg?longCache=true&style=flat)
+
+# Important Notice
+This public repository is read-only and no longer maintained. For the latest sample code repositories, visit the [SAP Samples](https://github.com/SAP-samples) organization.
+
 # SAP Cloud Platform SDK for Android Offline OData Sample
 
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/cloud-sdk-android-offline-odata)](https://api.reuse.software/info/github.com/SAP-samples/cloud-sdk-android-offline-odata)
